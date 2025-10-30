@@ -25,16 +25,20 @@ public class User{
     @Size(min = 8)
     private String password;
 
+    @Column(name = "email")
+    private String email;
+
     @Column(name = "team")
     private String team;
 
     protected User(){}
 
-    public User(String firstName,String lastName,String userName,String password,String team){
+    public User(String firstName,String lastName,String userName,String password,String email,String team){
         this.firstName = firstName;
         this.lastName = lastName;
         this.userName = userName;
         this.password = password;
+        this.email = email;
         this.team = team;
     }
     @Override
@@ -63,5 +67,8 @@ public class User{
 
     public String getTeam(){
         return team;
+    }
+    public void setPassword(String password){
+        this.password = password;
     }
 }
