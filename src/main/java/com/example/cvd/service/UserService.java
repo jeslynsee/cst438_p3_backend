@@ -25,9 +25,9 @@ public class UserService {
         return repo.findById(id);
     }
     public User save(User user) { 
-        if (user.getPassword()!= null){
-            user.setPassword()
-        }
+        //if (user.getPassword()!= null){
+            //user.setPassword()
+        //}
         return repo.save(user);
     }
     public void deleteById(Long id) { 
