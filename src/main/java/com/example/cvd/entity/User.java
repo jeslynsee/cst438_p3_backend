@@ -12,11 +12,9 @@ public class User{
     private Long id;
 
     @Column(name = "username", nullable = false)
-    @Size(min = 2, max = 12)
     private String username;
 
     @Column(name = "password", nullable = false)
-    @Size(min = 8)
     private String password;
 
     @Column(name = "email", nullable = false)
@@ -25,7 +23,7 @@ public class User{
     @Column(name = "team", nullable = false)
     private String team;
 
-    protected User(){}
+    public User(){}
 
     public User(String username, String password, String email, String team){
         this.username = username;
@@ -33,6 +31,7 @@ public class User{
         this.email = email;
         this.team = team;
     }
+
     @Override
     public String toString(){
         return String.format(
@@ -55,6 +54,14 @@ public class User{
 
     public void setUsername(String username) { 
         this.username = username; 
+    }
+
+    public String getEmail(){
+        return email;
+    }
+
+    public void setEmail(String email) { 
+        this.email = email; 
     }
 
     public String getTeam(){
