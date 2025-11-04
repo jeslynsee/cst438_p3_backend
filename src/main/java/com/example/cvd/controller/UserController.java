@@ -38,6 +38,13 @@ public class UserController {
         return mask(found);
     }
 
+    @GetMapping("/user/email/{email}")
+    public User findUserByEmail(@PathVariable String email) {
+        User found = repo.findByEmail(email)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+        return mask(found);
+    }
+
     // create a user
     @PostMapping
     public User createUser(@RequestBody User user){
@@ -72,7 +79,14 @@ public class UserController {
     }
 
     // TODO: Auth routes below 
+    @PostMapping("/login")
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public void login(@PathVariable User userToLogin) { //UNFINISHED
+        User found = repo.findByEmail(userToLogin.getEmail())
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid email or password"));
 
+    }
+    
 
     
 
