@@ -25,13 +25,13 @@ public class UserController {
     }
 
     // retrieves users by team
-    @GetMapping("/{team}")
-    public List<User> findByTeam(String team){
+    @GetMapping("/team/{team}")
+    public List<User> findByTeam(@PathVariable String team){
         return repo.findByTeam(team);
     }
 
     // get one particular user
-    @GetMapping("/{id}")
+    @GetMapping("/user/{id}")
     public User getUser(@PathVariable Long id){
         User found = repo.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
@@ -54,7 +54,7 @@ public class UserController {
             user.setPassword(newUser.getPassword()); 
             user.setEmail(newUser.getEmail());
             user.setTeam(newUser.getTeam()); 
-            return repo.save(newUser);
+            return repo.save(user);
           })
           .orElseGet(() -> {
             return repo.save(newUser);
@@ -71,7 +71,7 @@ public class UserController {
         repo.deleteById(id);
     }
 
-    // Auth routes below 
+    // TODO: Auth routes below 
 
 
     
@@ -83,6 +83,7 @@ public class UserController {
         copy.setUsername(u.getUsername());
         copy.setEmail(u.getEmail());
         copy.setPassword("********");
+        copy.setTeam(u.getTeam());
         return copy;
     }
 
