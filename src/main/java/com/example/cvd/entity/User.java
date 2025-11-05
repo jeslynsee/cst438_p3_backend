@@ -11,63 +11,71 @@ public class User{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "firstName", length = 50)
-    private String firstName;
+    @Column(name = "username", nullable = false)
+    private String username;
 
-    @Column(name = "lastName", length = 50)
-    private String lastName;
-
-    @Column(name = "userName", length = 12)
-    @Size(min = 2, max = 12)
-    private String userName;
-
-    @Column(name = "password")
-    @Size(min = 8)
+    @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "email")
+    @Column(name = "email", nullable = false)
     private String email;
 
-    @Column(name = "team")
+    @Column(name = "team", nullable = false)
     private String team;
 
-    protected User(){}
+    public User(){}
 
-    public User(String firstName,String lastName,String userName,String password,String email,String team){
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.userName = userName;
+    public User(String username, String password, String email, String team){
+        this.username = username;
         this.password = password;
         this.email = email;
         this.team = team;
     }
+
     @Override
     public String toString(){
         return String.format(
-            "User[firstName = '%s', lastName = '%s', userName = '%s', team = '%s']",
-            firstName, lastName, userName, team
+"User[username = '%s', team = '%s']",
+        username, team
         );
     }
     
     public Long getId(){
         return id;
     }
+
+    public void setId(Long id) { 
+        this.id = id; 
+    }
     
-    public String getFirstName(){
-        return firstName;
+    public String getUsername(){
+        return username;
     }
 
-    public String getLastName(){
-        return lastName;
+    public void setUsername(String username) { 
+        this.username = username; 
     }
 
-    public String getUserName(){
-        return userName;
+    public String getEmail(){
+        return email;
+    }
+
+    public void setEmail(String email) { 
+        this.email = email; 
     }
 
     public String getTeam(){
         return team;
     }
+
+    public void setTeam(String team){
+        this.team = team;
+    }
+
+    public String getPassword(){
+        return password;
+    }
+
     public void setPassword(String password){
         this.password = password;
     }
