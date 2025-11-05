@@ -12,4 +12,6 @@ public interface UserRepository extends JpaRepository <User, Long>{
     // custom function to find a user by their email (should be unique)
     // had to define as Optional, or else would get error in Controller file for trying to use orElseThrow
     Optional<User> findByEmail(String email);
+
+    Optional<User> findByUsername(String username);
 }
