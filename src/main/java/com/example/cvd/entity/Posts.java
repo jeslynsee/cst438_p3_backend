@@ -2,6 +2,7 @@ package com.example.cvd.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import com.example.cvd.entity.User;
 
 @Entity
 @Table(name = "posts")
@@ -12,68 +13,69 @@ public class Posts {
     private Long id;
 
     // URL or file path of the image
-    @Column(name = "img", nullable = false)
+    @Column(name = "img", nullable = false, updatable = false)
     private String imageUrl;
 
-    @Column(name = "likes", nullable = false)
-    private Long likes = 0L;
+    @Column(columnDefinition = "TEXT")
+    private String description;
 
-    // Many posts can belong to one user
-    @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
-    private User user;
+    @Column(nullable = false)
+    private Integer likes = 0;
 
     // Timestamp of when it was posted
-    @Column(name = "posted_time", nullable = false)
-    private LocalDateTime postedTime;
+    @Column(name = "postedTime", nullable = false)
+    private LocalDateTime postedTime = LocalDateTime.now();
 
-    protected Posts() {
+    // Many posts can belong to one user
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "userId", referencedColumnName = "id", nullable = false)
+    private User userId;
+
+
+    public Posts() {
     
     }
 
-    public Posts(String imageUrl, User user) {
+    public Posts(String imageUrl, String description) {
         this.imageUrl = imageUrl;
-        this.user = user;
-        this.likes = 0L;
+        this.description = description;
+        this.likes = 0;
         this.postedTime = LocalDateTime.now();
     }
+
+    public Long getId() {return id;}
 
     public void setId(Long id){
         this.id = id;
     }
-    public Long getId() {
-        return id;
-    }
 
-    public String getImageUrl() {
-        return imageUrl;
-    }
+    public String getImageUrl() {return imageUrl;}
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
     }
 
-    public Long getLikes() {
-        return likes;
-    }
+    public Integer getLikes() {return likes;}
 
-    public void setLikes(Long likes) {
+    public void setLikes(Integer likes) {
         this.likes = likes;
     }
 
-    public User getUser() {
-        return user;
+    public String getDescription() {return description;}
+
+    public void setDescription(String description){
+        this.description = description;
     }
 
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public LocalDateTime getPostedTime() {
-        return postedTime;
-    }
+    public LocalDateTime getPostedTime() {return postedTime;}
 
     public void setPostedTime(LocalDateTime postedTime) {
         this.postedTime = postedTime;
+    }
+
+    public User getUser() { return userId; }
+
+    public void setUser(User userId) { 
+        this.userId = userId; 
     }
 }

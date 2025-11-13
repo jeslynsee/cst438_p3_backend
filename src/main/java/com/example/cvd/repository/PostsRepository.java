@@ -1,40 +1,16 @@
 package com.example.cvd.repository;
 
 import com.example.cvd.entity.Posts;
+import org.springframework.data.jpa.repository.*;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
 
 @Repository
-public class PostsRepository {
-
-    private final Map<Long, Posts> posts = new HashMap<>();
-    private long nextId = 1L;
-
-    public List<Posts> findAll() {
-        return new ArrayList<>(posts.values());
-    }
-
-    public Optional<Posts> findById(Long id) {
-        return Optional.ofNullable(posts.get(id));
-    }
-
-    public Posts save(Posts post) {
-        if (post.getId() == null) {
-            post.setId(nextId++);
-        }
-        posts.put(post.getId(), post);
-        return post;
-    }
-
-    public void deleteById(Long id) {
-        posts.remove(id);
-    }
-
-    public void incrementLikes(Long id) {
-        Posts post = posts.get(id);
-        if (post != null) {
-            post.setLikes(post.getLikes() + 1);
-        }
-    }
+public interface PostsRepository extends JpaRepository<Posts, Long> {
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Transactional
+    @Query("UPDATE Posts p SET p.likes = p.likes + 1 WHERE p.id = :id")
+    int incrementLikes(@Param("id") Long id);
 }
