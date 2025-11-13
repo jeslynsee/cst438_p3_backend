@@ -23,6 +23,9 @@ public class User{
     @Column(name = "team", nullable = false)
     private String team;
 
+    @Column(name = "admin", nullable = false)
+    private Boolean admin;
+
     public User(){}
 
     public User(String username, String password, String email, String team){
