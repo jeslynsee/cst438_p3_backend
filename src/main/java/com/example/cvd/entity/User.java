@@ -28,11 +28,12 @@ public class User{
 
     public User(){}
 
-    public User(String username, String password, String email, String team){
+    public User(String username, String password, String email, String team, boolean admin){
         this.username = username;
         this.password = password;
         this.email = email;
         this.team = team;
+        this.admin = admin;
     }
 
     @Override
@@ -81,5 +82,12 @@ public class User{
 
     public void setPassword(String password){
         this.password = password;
+    }
+
+    public Boolean getAdmin() { 
+        return admin; 
+    }
+    public void setAdmin(Boolean admin) { 
+        this.admin = admin; 
     }
 }
