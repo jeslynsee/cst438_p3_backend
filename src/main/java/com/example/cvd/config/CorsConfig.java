@@ -15,7 +15,10 @@ public class CorsConfig {
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
                     // below is for web testing
-                    .allowedOrigins("http://localhost:8081")
+                    .allowedOrigins("http://localhost:8081", 
+                    "https://catsvsdogs-web-42f3d8a67c13.herokuapp.com",
+                    "http://localhost:3000"
+                    )
                     // allowing methods and headers to be used, when we call from frontend
                     .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                     .allowedHeaders("*")
