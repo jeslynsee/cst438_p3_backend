@@ -29,7 +29,7 @@ public class Posts {
     // Many posts can belong to one user
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId", referencedColumnName = "id", nullable = false)
-    private User userId;
+    private User user;
 
 
     public Posts() {
@@ -73,9 +73,9 @@ public class Posts {
         this.postedTime = postedTime;
     }
 
-    public User getUser() { return userId; }
+    public User getUser() { return user; }
 
-    public void setUser(User userId) { 
-        this.userId = userId; 
+    public void setUser(User user) { 
+        this.user = user; 
     }
 }

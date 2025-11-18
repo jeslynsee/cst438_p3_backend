@@ -43,13 +43,17 @@ public class PostsController {
 
         Posts saved = postsRepo.save(post);
         return ResponseEntity.created(URI.create("/posts/"+saved.getId())).body(saved);
-
     }
 
     
     @GetMapping
     public List<Posts> getAllPosts() {
         return postsRepo.findAll();
+    }
+
+    @GetMapping("/team/{team}")
+    public List<Posts> getPostsByTeam(@PathVariable String team) {
+        return postsRepo.getPostsByUser_Team(team);
     }
 
     
