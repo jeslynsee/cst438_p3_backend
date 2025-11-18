@@ -140,6 +140,7 @@ public class UserController {
         copy.setEmail(u.getEmail());
         copy.setPassword("********");
         copy.setTeam(u.getTeam());
+        copy.setAdmin(u.getAdmin());
         return copy;
     }
 
