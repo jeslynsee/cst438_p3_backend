@@ -132,6 +132,14 @@ public class UserController {
         
     }
 
+    @GetMapping("/non-admins")
+    public List<User> getNonAdminUsers() {
+        return repo.findByAdminFalse()
+            .stream()
+            .map(this::mask)
+            .toList();
+    }
+
     // masking function, so passwords don't leak
     private User mask(User u) {
         User copy = new User();

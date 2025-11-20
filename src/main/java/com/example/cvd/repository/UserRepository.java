@@ -9,6 +9,11 @@ public interface UserRepository extends JpaRepository <User, Long>{
     // custom function to find users by filtered team
     List<User> findByTeam(String team);
 
+    // custom function to find non-admin users
+    List<User> findByAdminFalse();
+
+    
+
     // custom function to find a user by their email (should be unique)
     // had to define as Optional, or else would get error in Controller file for trying to use orElseThrow
     Optional<User> findByEmail(String email);
