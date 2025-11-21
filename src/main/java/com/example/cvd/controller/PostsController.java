@@ -16,7 +16,7 @@ import java.util.List;
 record PostCreateDto(String imageUrl, String description, Long userId) {}
 record PostUpdateDto(String imageUrl, String description, LocalDateTime postedTime) {}
 record PostResponseDto(Long id, String imageUrl, String description,
-                       Integer likes, LocalDateTime postedTime, Long userId) {}
+                       Integer likes, LocalDateTime postedTime, Long userId, String username) {}
 
 @RestController
 @RequestMapping("/posts")
@@ -37,7 +37,8 @@ public class PostsController {
                 p.getDescription(),
                 p.getLikes(),
                 p.getPostedTime(),
-                p.getUser().getId()
+                p.getUser().getId(),
+                p.getUser().getUsername()
         );
     }
 
