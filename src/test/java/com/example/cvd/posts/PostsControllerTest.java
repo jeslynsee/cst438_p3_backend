@@ -94,5 +94,42 @@ class PostsControllerTest {
 
         verify(postsRepo).deleteById(10L);
     }
+
+    @Test
+    void shouldDeleteNoPost() throws Exception{
+        when(postsRepo.existsById(9999L)).thenReturn(false);
+        
+        mockMvc.perform(delete("/posts/9999"))
+            .andExpect(status().isNotFound());
+
+    }
+
+    @Test
+    void shouldReturnNoPost() throws Exception{
+        when(postsRepo.existsById(9999L)).thenReturn(false);
+
+        mockMvc.perform(get("/posts/{id}",9999))
+        .andExpect(status().isNotFound());
+
+    }
+
+    @Test
+    void shouldUpdateLike() throws Exception{
+        long id = 10L;
+
+        when(postsRepo.incrementLikes(id)).thenReturn(1);
+
+        Posts updated = new Posts();
+        updated.setId(id);
+        updated.setLikes(1);
+        when(postsRepo.findById(id)).thenReturn(Optional.of(updated));
+
+        mockMvc.perform(post("/posts/{id}/like", id))
+           .andExpect(status().isOk())
+           .andExpect(jsonPath("$.likes").value(1));
+        
+
+    }
+    
 }
 
