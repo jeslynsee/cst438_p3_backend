@@ -123,4 +123,5 @@ public class PostsController {
         postsRepo.deleteById(id);
         return ResponseEntity.noContent().build();
     }
+
 }
