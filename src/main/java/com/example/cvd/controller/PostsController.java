@@ -124,8 +124,4 @@ public class PostsController {
         return ResponseEntity.noContent().build();
     }
 
-    // @PostMapping
-    // public ResponseEntity<Void> imageUpload() {
-
-    // }
 }
