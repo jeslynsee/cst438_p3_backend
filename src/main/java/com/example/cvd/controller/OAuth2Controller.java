@@ -2,6 +2,8 @@ package com.example.cvd.controller;
 
 import com.example.cvd.entity.User;
 import com.example.cvd.repository.UserRepository;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -17,10 +19,21 @@ import java.util.Map;
 public class OAuth2Controller {
     
     private final UserRepository userRepository;
-    private final String GITHUB_CLIENT_ID;
-    private final String GITHUB_CLIENT_SECRET;
-    private final String GOOGLE_CLIENT_ID;
-    private final String GOOGLE_CLIENT_SECRET;
+    @Value("${github.client.id}")
+    private String GITHUB_CLIENT_ID;
+
+    @Value("${github.client.secret}")
+    private String GITHUB_CLIENT_SECRET;
+
+    @Value("${google.client.id}")
+    private String GOOGLE_CLIENT_ID;
+
+    @Value("${google.client.secret}")
+    private String GOOGLE_CLIENT_SECRET;
+
+
+
+    
 
     public OAuth2Controller(UserRepository userRepository) {
         this.userRepository = userRepository;
