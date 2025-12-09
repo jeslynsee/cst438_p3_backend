@@ -17,8 +17,10 @@ import java.util.Map;
 public class OAuth2Controller {
     
     private final UserRepository userRepository;
-    private final String GITHUB_CLIENT_ID = "Ov23liUbTaB4he1bfxAS";
-    private final String GITHUB_CLIENT_SECRET = "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";
+    private final String GITHUB_CLIENT_ID;
+    private final String GITHUB_CLIENT_SECRET;
+    private final String GOOGLE_CLIENT_ID;
+    private final String GOOGLE_CLIENT_SECRET;
 
     public OAuth2Controller(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -29,7 +31,6 @@ public class OAuth2Controller {
         String code = request.get("code");
         
         try {
-            // Exchange code for access token
             RestTemplate restTemplate = new RestTemplate();
             HttpHeaders tokenHeaders = new HttpHeaders();
             tokenHeaders.set("Accept", "application/json");
@@ -104,6 +105,85 @@ public class OAuth2Controller {
                     newUser.setEmail(finalEmail);
                     newUser.setUsername(username);
                     newUser.setPassword("oauth_github_" + githubId);
+                    newUser.setTeam("undecided");
+                    newUser.setAdmin(false);
+                    return userRepository.save(newUser);
+                });
+    
+            return ResponseEntity.ok(Map.of(
+                "message", "Login successful",
+                "user", maskUser(user)
+            ));
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError()
+                .body(Map.of("error", "OAuth authentication failed: " + e.getMessage()));
+        }
+    }
+
+    @PostMapping("/google/exchange")
+    public ResponseEntity<?> exchangeGoogleCode(@RequestBody Map<String, String> request) {
+        String code = request.get("code");
+        String redirectUri = request.get("redirectUri"); // Need this from frontend
+        
+        try {
+            // Exchange code for access token
+            RestTemplate restTemplate = new RestTemplate();
+            HttpHeaders tokenHeaders = new HttpHeaders();
+            tokenHeaders.set("Content-Type", "application/x-www-form-urlencoded");
+            
+            String tokenRequestBody = String.format(
+                "code=%s&client_id=%s&client_secret=%s&redirect_uri=%s&grant_type=authorization_code",
+                code, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, redirectUri
+            );
+            
+            HttpEntity<String> tokenEntity = new HttpEntity<>(tokenRequestBody, tokenHeaders);
+            
+            ResponseEntity<Map> tokenResponse = restTemplate.postForEntity(
+                "https://oauth2.googleapis.com/token",
+                tokenEntity,
+                Map.class
+            );
+            
+            String accessToken = (String) tokenResponse.getBody().get("access_token");
+            
+            if (accessToken == null) {
+                return ResponseEntity.badRequest().body(Map.of("error", "Failed to get access token"));
+            }
+            
+            // Get user info from Google
+            HttpHeaders userHeaders = new HttpHeaders();
+            userHeaders.setBearerAuth(accessToken);
+            HttpEntity<String> userEntity = new HttpEntity<>(userHeaders);
+            
+            ResponseEntity<Map> userResponse = restTemplate.exchange(
+                "https://www.googleapis.com/oauth2/v2/userinfo",
+                HttpMethod.GET,
+                userEntity,
+                Map.class
+            );
+            
+            Map<String, Object> googleUser = userResponse.getBody();
+            String googleEmail = (String) googleUser.get("email");
+            String name = (String) googleUser.get("name");
+            String googleId = (String) googleUser.get("id");
+            
+            // Use email prefix as username if name not available
+            String username = name != null ? name : googleEmail.split("@")[0];
+            
+            // Make variables final for lambda
+            final String finalEmail = googleEmail;
+            final String finalUsername = username;
+            final String finalGoogleId = googleId;
+            
+            // Find or create user
+            User user = userRepository.findByEmail(finalEmail)
+                .orElseGet(() -> {
+                    User newUser = new User();
+                    newUser.setEmail(finalEmail);
+                    newUser.setUsername(finalUsername);
+                    newUser.setPassword("oauth_google_" + finalGoogleId);
                     newUser.setTeam("undecided");
                     newUser.setAdmin(false);
                     return userRepository.save(newUser);
