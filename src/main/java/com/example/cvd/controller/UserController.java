@@ -67,9 +67,9 @@ public class UserController {
     public User updateUser(@PathVariable Long id, @RequestBody User newUser) {
         return repo.findById(id).map(user -> {
             user.setUsername(newUser.getUsername());
-            user.setPassword(newUser.getPassword()); 
+            // user.setPassword(newUser.getPassword()); 
             user.setEmail(newUser.getEmail());
-            user.setTeam(newUser.getTeam()); 
+            // user.setTeam(newUser.getTeam()); 
             return repo.save(user);
           })
           .orElseGet(() -> {
