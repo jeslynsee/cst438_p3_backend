@@ -18,7 +18,7 @@ public class OAuth2Controller {
     
     private final UserRepository userRepository;
     private final String GITHUB_CLIENT_ID = "Ov23liUbTaB4he1bfxAS";
-    private final String GITHUB_CLIENT_SECRET = "YOUR_GITHUB_CLIENT_SECRET"; // Add your secret here
+    private final String GITHUB_CLIENT_SECRET = "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";
 
     public OAuth2Controller(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -54,7 +54,6 @@ public class OAuth2Controller {
                 return ResponseEntity.badRequest().body(Map.of("error", "Failed to get access token"));
             }
             
-            // Get user info from GitHub
             HttpHeaders userHeaders = new HttpHeaders();
             userHeaders.setBearerAuth(accessToken);
             HttpEntity<String> userEntity = new HttpEntity<>(userHeaders);
@@ -67,12 +66,11 @@ public class OAuth2Controller {
             );
             
             Map<String, Object> githubUser = userResponse.getBody();
-            String email = (String) githubUser.get("email");
+            String githubEmail = (String) githubUser.get("email"); 
             String username = (String) githubUser.get("login");
             Long githubId = ((Number) githubUser.get("id")).longValue();
             
-            // If email is private, fetch from emails endpoint
-            if (email == null) {
+            if (githubEmail == null) {
                 ResponseEntity<Map[]> emailResponse = restTemplate.exchange(
                     "https://api.github.com/user/emails",
                     HttpMethod.GET,
@@ -84,30 +82,33 @@ public class OAuth2Controller {
                 if (emails != null && emails.length > 0) {
                     for (Map emailData : emails) {
                         if ((Boolean) emailData.get("primary")) {
-                            email = (String) emailData.get("email");
+                            githubEmail = (String) emailData.get("email");
                             break;
                         }
                     }
                 }
                 
                 // If still no email, use github username
-                if (email == null) {
-                    email = username + "@github.oauth";
+                if (githubEmail == null) {
+                    githubEmail = username + "@github.oauth";
                 }
             }
             
+            // Now use final variable
+            final String finalEmail = githubEmail;
+            
             // Find or create user
-            User user = userRepository.findByEmail(email)
+            User user = userRepository.findByEmail(finalEmail)
                 .orElseGet(() -> {
                     User newUser = new User();
-                    newUser.setEmail(email);
+                    newUser.setEmail(finalEmail);
                     newUser.setUsername(username);
-                    newUser.setPassword("oauth_github_" + githubId); // Mark as OAuth user
+                    newUser.setPassword("oauth_github_" + githubId);
                     newUser.setTeam("undecided");
                     newUser.setAdmin(false);
                     return userRepository.save(newUser);
                 });
-
+    
             return ResponseEntity.ok(Map.of(
                 "message", "Login successful",
                 "user", maskUser(user)
