@@ -1,0 +1,29 @@
+package com.example.cvd.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+@Configuration
+public class CorsConfig {
+
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**")
+                    // below is for web testing
+                    .allowedOrigins("http://localhost:8081", 
+                    "https://catsvsdogs-web-42f3d8a67c13.herokuapp.com",
+                    "http://localhost:3000"
+                    )
+                    // allowing methods and headers to be used, when we call from frontend
+                    .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                    .allowedHeaders("*")
+                    .allowCredentials(true);
+            }
+        };
+    }
+}
